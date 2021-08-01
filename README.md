@@ -154,7 +154,7 @@ In this sample we will dynamically create PVs with Azure disks for use by a sing
         Type:              CSI (a Container Storage Interface (CSI) volume source)
         Driver:            disk.csi.azure.com
         FSType:
-        VolumeHandle:      /subscriptions/52993644-abaa-4d60-9001-d2859a06a71c/resourceGroups/mc_aks-hybrid-pod-rg_kd529925813aad6_westeurope/providers/Microsoft.Compute/disks/pvc-911c6be4-603d-4203-88e9-4b523475c3bb
+        VolumeHandle:      /subscriptions/xxxxx-xxxx-xxxxxx/resourceGroups/mc_aks-csi-test-rg_akscsitest_eastus2/providers/Microsoft.Compute/disks/pvc-911c6be4-603d-4203-88e9-4b523475c3bb
         ReadOnly:          false
         VolumeAttributes:      skuname=Premium_LRS
                             storage.kubernetes.io/csiProvisionerIdentity=1627418671510-8081-disk.csi.azure.com
@@ -245,7 +245,7 @@ For details on all the parameters, see [volume snapshot class parameters](https:
     Deletion Policy:  Delete
     Driver:           disk.csi.azure.com
     Source:
-        Volume Handle:             /subscriptions/52993644-abaa-4d60-9001-d2859a06a71c/resourceGroups/mc_aks-hybrid-pod-rg_kd529925813aad6_westeurope/providers/Microsoft.Compute/disksb523475c3bb
+        Volume Handle:             /subscriptions/xxxxx-xxxx-xxxxxx/resourceGroups/mc_aks-csi-test-rg_akscsitest_eastus2/providers/Microsoft.Compute/disksb523475c3bb
     Volume Snapshot Class Name:  vsc-azure-disk-dynamic
     Volume Snapshot Ref:
         API Version:       snapshot.storage.k8s.io/v1beta1
@@ -258,7 +258,7 @@ For details on all the parameters, see [volume snapshot class parameters](https:
     Creation Time:    1627729149921916700
     Ready To Use:     true
     Restore Size:     1073741824
-    Snapshot Handle:  /subscriptions/52993644-abaa-4d60-9001-d2859a06a71c/resourceGroups/mc_aks-hybrid-pod-rg_kd529925813aad6_westeurope/providers/Microsoft.Compute/snapshots/snapsh   CLAIM                             STORAGECLASS          REASON   AGE
+    Snapshot Handle:  /subscriptions/xxxxx-xxxx-xxxxxx/resourceGroups/mc_aks-csi-test-rg_akscsitest_eastus2/providers/Microsoft.Compute/snapshots/snapsh   CLAIM                             STORAGECLASS          REASON   AGE
     azure-file-static                          1Gi        RWX            Retain           Released   csi-test/azure-file-static                                       2d17h
     pvc-911c6be4-603d-4203-88e9-4b523475c3bb   1Gi        RWO            Delete           Bound      csi-test/pvc-azure-disk-dynamic   managed-csi-premium            28m
     ```
@@ -338,7 +338,7 @@ During a failure event, backed up data can be restored to a Managed Disk from th
         Type:              CSI (a Container Storage Interface (CSI) volume source)
         Driver:            disk.csi.azure.com
         FSType:
-        VolumeHandle:      /subscriptions/52993644-abaa-4d60-9001-d2859a06a71c/resourceGroups/mc_aks-hybrid-pod-rg_kd529925813aad6_westeurope/providers/Microsoft.Compute/disks/pvc-3b5c8f03-6307-4712-8774-573fe4a35e5e
+        VolumeHandle:      /subscriptions/xxxxx-xxxx-xxxxxx/resourceGroups/mc_aks-csi-test-rg_akscsitest_eastus2/providers/Microsoft.Compute/disks/pvc-3b5c8f03-6307-4712-8774-573fe4a35e5e
         ReadOnly:          false
         VolumeAttributes:  skuname=Premium_LRS
                            storage.kubernetes.io/csiProvisionerIdentity=1627726829005-8081-disk.csi.azure.com
