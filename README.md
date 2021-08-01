@@ -2,10 +2,6 @@
 
 A reference implementation for using CSI Storage Drivers based persistent volumes for `stateful` workloads hosted on Azure Kubernetes Service (AKS).
 
-## Table of contents
-
-[[_TOC_]]
-
 ## Overview
 
 The [Container Storage Interface (CSI)](https://kubernetes-csi.github.io/docs/) is a standard for exposing arbitrary block and file storage systems to containerized workloads on Kubernetes. By adopting and using CSI, AKS can write, deploy, and iterate plug-ins to expose new or improve existing storage systems in Kubernetes without having to touch the core Kubernetes code and wait for its release cycles.
@@ -372,8 +368,8 @@ In this sample we will statically create `PersistentVolume` with an existing Azu
 1. Create a Kubernetes Secret with Azure Storage Account Name and Storage Key.
 
     ```sh
-    $ STORAGE_ACCOUNT_NAME=cirrusplkd529925813mvp01
-    $ STORAGE_KEY='**********'
+    $ STORAGE_ACCOUNT_NAME=<Provide Azure Storage Account Name Here>
+    $ STORAGE_KEY=<Provide Azure Storage Account Key Here>
     $ kubectl create secret generic azure-secret -n csi-test \
         --from-literal=azurestorageaccountname=$STORAGE_ACCOUNT_NAME \
         --from-literal=azurestorageaccountkey=$STORAGE_KEY
@@ -496,3 +492,10 @@ Delete the resources created in `csi-test` namespace.
 ```sh
 $ kubectl delete ns csi-test
 ```
+
+## Reference
+
+- [Kubernetes Container Storage Interface (CSI) Documentation](https://kubernetes-csi.github.io/docs/)
+- [YouTube: Introduction to Using the Container Storage Interface (CSI) Primitives - Michael Mattsson](https://youtu.be/AnfAd6goq-o)
+- [GitHub: Azure Disk CSI driver for Kubernetes](https://github.com/kubernetes-sigs/azuredisk-csi-driver)
+- [GitHub: Azure File CSI Driver for Kubernetes](https://github.com/kubernetes-sigs/azurefile-csi-driver)

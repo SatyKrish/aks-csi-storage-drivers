@@ -1,8 +1,8 @@
 ---
-kind: PersistentVolumeClaim
 apiVersion: v1
+kind: PersistentVolumeClaim
 metadata:
-  name: pvc-azure-disk-dynamic
+  name: pvc-azure-disk-dynamic-restored
   labels:
     app.kubernetes.io/name: csi-test
 spec:
@@ -12,6 +12,10 @@ spec:
   resources:
     requests:
       storage: 1Gi
+  dataSource:
+    name: snapshot-azure-disk-dynamic
+    kind: VolumeSnapshot
+    apiGroup: snapshot.storage.k8s.io
 ---
 kind: Deployment
 apiVersion: apps/v1
@@ -33,7 +37,7 @@ spec:
         "beta.kubernetes.io/os": linux
       containers:
       - name: busybox
-        image: container-registry.ubs.net/busybox:1.30.1
+        image: busybox:1.30.1
         args: ["/bin/sh", "-ec", "SLEEP_TIMEOUT=3600;while :; do echo sleeping for $SLEEP_TIMEOUT seconds...; sleep $SLEEP_TIMEOUT ; done"]
         resources:
           requests:
@@ -48,4 +52,4 @@ spec:
       volumes:
       - name: azure-disk-dynamic
         persistentVolumeClaim:
-          claimName: pvc-azure-disk-dynamic
+          claimName: pvc-azure-disk-dynamic-restored
