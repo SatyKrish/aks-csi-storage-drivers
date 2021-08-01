@@ -1,0 +1,22 @@
+---
+apiVersion: snapshot.storage.k8s.io/v1beta1
+kind: VolumeSnapshotClass
+metadata:
+  name: vsc-azure-disk-dynamic
+  labels:
+    app.kubernetes.io/name: csi-test
+driver: disk.csi.azure.com
+deletionPolicy: Delete
+parameters:
+  incremental: "true"  # available values: "true", "false" ("true" by default for Azure Public Cloud)
+---
+apiVersion: snapshot.storage.k8s.io/v1beta1
+kind: VolumeSnapshot
+metadata:
+  name: snapshot-azure-disk-dynamic
+  labels:
+    app.kubernetes.io/name: csi-test
+spec:
+  volumeSnapshotClassName: vsc-azure-disk-dynamic
+  source:
+    persistentVolumeClaimName: pvc-azure-disk-dynamic
