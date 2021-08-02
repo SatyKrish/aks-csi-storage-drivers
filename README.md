@@ -263,7 +263,19 @@ For details on all the parameters, see [volume snapshot class parameters](https:
 
 During a failure event, backed up data can be restored to a Managed Disk from the Snapshot created in the pervious section. This done by creating a `PersistentVolumeClaim` resource based on an existing `VolumeSnapshot`. CSI provisioner will then create a new `PersistentVolume` from the snapshot.
 
-1. Review the `PersistenVolumeClaim` in the manifest - `manifests/3-azure-disk-csi-restore.yaml` and ensure `dataSource` maps to the `VolumeSnapshot` created in previous section. 
+1. Lets simulate failure by deleting the pods and persistent volume created earlier.
+    ```sh
+    $ kubectl delete -f manifests/1-azure-disk-csi-dynamic-pv.yaml -n csi-test
+    ```
+    
+    ```
+    OUTPUT:
+    
+    persistentvolumeclaim/azure-disk-dynamic deleted
+    deployment.apps/azure-disk-dynamic deleted
+    ```
+2. Ensure the `PersistentVolume` and `Disk` in AKS `MC_***` resource group are deleted.
+3. Review the `PersistenVolumeClaim` in the manifest - `manifests/3-azure-disk-csi-restore.yaml` and ensure `dataSource` maps to the `VolumeSnapshot` created in previous section. 
 
 2. Apply the manifest.
 
