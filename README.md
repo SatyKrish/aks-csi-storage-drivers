@@ -15,7 +15,7 @@ The CSI storage driver support on AKS allows you to natively use:
 
 ## Enable CSI Storage Drivers
 
-Starting in Kubernetes version 1.21, AKS will use `CSI drivers` only and by default as storage class. `CSI drivers` are the future of storage extension in Kubernetes. `in-tree` volume plugins are expected to be removed from Kubernetes version 1.23 onwards. After `in-tree` volume plugins are removed, existing volumes using `in-tree` volume plugins will communicate through `CSI drivers` instead.
+Container Storage Interface (CSI) drivers for Azure disks and Azure files on `AKS` is now Generally Available (GA) in Kubernetes version 1.21+. Azure Disk CSI migration is turned on for 1.21+ clusters. Starting in Kubernetes version 1.21, `AKS` will use `CSI drivers` only and by default as storage class. `CSI drivers` are the future of storage extension in Kubernetes. `in-tree` volume plugins are expected to be removed from Kubernetes version 1.23 onwards. After `in-tree` volume plugins are removed, existing volumes using `in-tree` volume plugins will communicate through `CSI drivers` instead.
 
 > `in-tree` volume plugin refers to the current storage drivers that are part of the core Kubernetes code.
 
