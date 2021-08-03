@@ -15,9 +15,9 @@ The CSI storage driver support on AKS allows you to natively use:
 
 ## Enable CSI Storage Drivers
 
-Starting in Kubernetes version 1.21, AKS will use `CSI drivers` only and by default as storage class. These drivers are the future of storage support in Kubernetes.
+Starting in Kubernetes version 1.21, AKS will use `CSI drivers` only and by default as storage class. `CSI drivers` are the future of storage extension in Kubernetes. `in-tree` volume plugins are expected to be removed from Kubernetes version 1.23 onwards. After `in-tree` volume plugins are removed, existing volumes using `in-tree` volume plugins will communicate through `CSI drivers` instead.
 
-> `in-tree drivers` refers to the current storage drivers that are part of the core Kubernetes code versus the new `CSI drivers`, which are plug-ins.
+> `in-tree` volume plugin refers to the current storage drivers that are part of the core Kubernetes code.
 
 Following new storage classes are added to AKS for suporting CSI Storage Drivers.
 
@@ -28,7 +28,7 @@ Following new storage classes are added to AKS for suporting CSI Storage Drivers
 | azure-file-csi            | file.csi.azure.com        |
 | azure-file-csi-premium    | file.csi.azure.com        |
 
-When creating new AKS cluster using k8s version 1.21.x or upgrading exiting cluster k8s version from 1.20.x to 1.21.x, the `default` storage class will be the `managed-csi` storage class. Existing `in-tree` storage classses are not removed and will be deprecated in future.
+When creating new AKS cluster using k8s version 1.21.x or upgrading exiting cluster k8s version from 1.20.x to 1.21.x, the `default` storage class will be the `managed-csi` storage class.
 
 ### Storage classes in Kubernetes Version 1.20.x & before
 
@@ -65,10 +65,6 @@ managed                 kubernetes.io/azure-disk   Delete          WaitForFirstC
 managed-csi-premium     disk.csi.azure.com         Delete          WaitForFirstConsumer   true                   47h
 managed-premium         kubernetes.io/azure-disk   Delete          WaitForFirstConsumer   true                   15d
 ```
-
-> **NOTE**: AKS with k8s 1.21 will use `disk.csi.azure.com` as the `default` storage class. Existing applications using `default` storage class should update their manifest to use `managed` for backward compatibility.
-
-> **IMPORTANT**: As part of K8s 1.21 upgrade, Application teams are recommended to migrate their persistent volumes to use `CSI drivers` based storage classes.
 
 ## Azure Disk CSI Driver
 
