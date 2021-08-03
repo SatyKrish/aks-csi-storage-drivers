@@ -68,11 +68,11 @@ managed-premium         kubernetes.io/azure-disk   Delete          WaitForFirstC
 
 ## Azure Disk CSI Driver
 
-The Azure disk CSI driver is CSI specification compliant, and used by AKS to manage the lifecycle of Azure disks.
+The Azure disk CSI driver is CSI specification compliant, and used by AKS to manage the lifecycle of Azure disks attached to the pod as `PersistentVolume`.
 
 ### Create Dynamic Persistent Volume
 
-In this sample we will dynamically create PVs with Azure disks for use by a single pod in an AKS cluster. 
+In this sample we will dynamically create `PersistentVolume` with Azure disks for use by a single pod in AKS cluster. 
 
 1. Review the manifest file `manifests/1-azure-disk-csi-dynamic-pv.yaml` to ensure PersistentVolumeClaim `storageClassName` is set to `managed-csi-premium`.
 
@@ -367,7 +367,7 @@ During a failure event, backed up data can be restored to a Managed Disk from th
 
 ## Azure Files CSI Driver
 
-The Azure Files CSI driver is CSI specification compliant, and used by AKS to manage the lifecycle of Azure file shares.
+The Azure Files CSI driver is CSI specification compliant, and used by AKS to manage the lifecycle of Azure file shares attached to pod as `PersistentVolume`.
 
 ### Create Static Persistent Volume
 
