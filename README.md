@@ -33,7 +33,7 @@ When creating new AKS cluster using k8s version 1.21.x or upgrading exiting clus
 ### Storage classes in Kubernetes Version 1.20.x & before
 
 ```sh
-$ kubectl get storage class
+kubectl get storage class
 ```
 
 ```
@@ -49,7 +49,7 @@ managed-premium         kubernetes.io/azure-disk   Delete          WaitForFirstC
 ### Storage classes in Kubernetes Version 1.21.x
 
 ```sh
-$ kubectl get storage class
+kubectl get storage class
 ```
 
 ```
@@ -79,9 +79,9 @@ In this sample we will dynamically create `PersistentVolume` with Azure disks fo
 2. Apply the manifest.
 
     ```sh
-    $ kubectl create namespace csi-test
+    kubectl create namespace csi-test
 
-    $ kubectl apply -f manifests/1-azure-disk-csi-dynamic-pv.yaml -n csi-test
+    kubectl apply -f manifests/1-azure-disk-csi-dynamic-pv.yaml -n csi-test
     ```
 
     ```
@@ -94,7 +94,7 @@ In this sample we will dynamically create `PersistentVolume` with Azure disks fo
 3. Check whether the resources are provisioned correctly and running.
 
     ```sh
-    $ kubectl get pod,pvc -n csi-test -l app.kubernetes.io/name=csi-test
+    kubectl get pod,pvc -n csi-test -l app.kubernetes.io/name=csi-test
     ```
 
     ```
@@ -111,7 +111,7 @@ In this sample we will dynamically create `PersistentVolume` with Azure disks fo
 
     ```sh
     # Persistent Volume or PV is not a namespace bound resource
-    $ kubectl get pv
+    kubectl get pv
     ```
 
     ```
@@ -122,7 +122,7 @@ In this sample we will dynamically create `PersistentVolume` with Azure disks fo
     ```
     
     ```sh
-    $ kubectl describe persistentvolume/pvc-8512041f-3839-42d2-a0c9-8b64e2af3a54
+    kubectl describe persistentvolume/pvc-8512041f-3839-42d2-a0c9-8b64e2af3a54
     ```
 
     ```
@@ -156,8 +156,10 @@ In this sample we will dynamically create `PersistentVolume` with Azure disks fo
 5. Test the persistent volume for read-write operation. In the test pod, persistent volume is mounted at `/data` path.
 
     ```sh
-    $ kubectl exec -it azure-disk-dynamic-5bfbcd7b7d-swqgv -n csi-test -- sh
+    kubectl exec -it azure-disk-dynamic-5bfbcd7b7d-swqgv -n csi-test -- sh
+    ```
 
+    ```sh
     / # ls
     bin   data  dev   etc   home  proc  root  sys   tmp   usr   var
     / #
@@ -183,7 +185,7 @@ For details on all the parameters, see [volume snapshot class parameters](https:
 2. Apply the manifest.
 
     ```sh
-    $ kubectl apply -f manifests/2-azure-disk-csi-snapshot.yaml
+    kubectl apply -f manifests/2-azure-disk-csi-snapshot.yaml -n csi-test
     ```
 
     ```
@@ -195,7 +197,7 @@ For details on all the parameters, see [volume snapshot class parameters](https:
 3. Check whether the `VolumeSnapshot` resources are provisioned correctly.
 
     ```sh
-    $ kubectl get volumesnapshotclass,volumesnapshot,volumesnapshotcontent -n csi-test
+    kubectl get volumesnapshotclass,volumesnapshot,volumesnapshotcontent -n csi-test
     ```
 
     ```
@@ -214,7 +216,7 @@ For details on all the parameters, see [volume snapshot class parameters](https:
 4. Verify the `VolumeSnapshotContent` resource to ensure that the `volumeHandle` matches the  Managed Disk created in previous section, `snapshotHandle` is created as a `Snapshot` in AKS `MC_***` resource group and `Status` has `Ready To Use` set to `true`.
 
     ```sh
-    $ kubectl describe VolumeSnapshotContent snapcontent-ed014617-5396-47f4-9c87-06eebe16d8bb -n csi-test
+    kubectl describe VolumeSnapshotContent snapcontent-ed014617-5396-47f4-9c87-06eebe16d8bb -n csi-test
     ```
 
     ```
@@ -261,7 +263,7 @@ During a failure event, backed up data can be restored to a Managed Disk from th
 
 1. Lets simulate failure by deleting the pods and persistent volume created earlier.
     ```sh
-    $ kubectl delete -f manifests/1-azure-disk-csi-dynamic-pv.yaml -n csi-test
+    kubectl delete -f manifests/1-azure-disk-csi-dynamic-pv.yaml -n csi-test
     ```
     
     ```
@@ -276,7 +278,7 @@ During a failure event, backed up data can be restored to a Managed Disk from th
 2. Apply the manifest.
 
     ```sh
-    $ kubectl apply -f manifests/3-azure-disk-csi-restore.yaml -n csi-test
+    kubectl apply -f manifests/3-azure-disk-csi-restore.yaml -n csi-test
     ```
 
     ```
@@ -289,7 +291,7 @@ During a failure event, backed up data can be restored to a Managed Disk from th
 3. Check whether the resources are provisioned correctly and running.
 
     ```sh
-    $ kubectl get pod,pvc -n csi-test -l app.kubernetes.io/name=csi-test
+    kubectl get pod,pvc -n csi-test -l app.kubernetes.io/name=csi-test
     ```
 
     ```
@@ -306,7 +308,7 @@ During a failure event, backed up data can be restored to a Managed Disk from th
 
     ```sh
     # Persistent Volume or PV is not a namespace bound resource
-    $ kubectl get pv
+    kubectl get pv
     ```
 
     ```
@@ -317,7 +319,7 @@ During a failure event, backed up data can be restored to a Managed Disk from th
     ```
     
     ```sh
-    $ kubectl describe persistentvolume/pvc-3b5c8f03-6307-4712-8774-573fe4a35e5e
+    kubectl describe persistentvolume/pvc-3b5c8f03-6307-4712-8774-573fe4a35e5e
     ```
 
     ```
@@ -352,7 +354,7 @@ During a failure event, backed up data can be restored to a Managed Disk from th
 5. Check whether the data is restored. In the test pod, persistent volume is mounted at `/data` path.
 
     ```sh
-    $ kubectl exec -it azure-disk-dynamic-77f885d64b-hp5kf -n csi-test -- sh
+    kubectl exec -it azure-disk-dynamic-77f885d64b-hp5kf -n csi-test -- sh
 
     / # ls
     bin   data  dev   etc   home  proc  root  sys   tmp   usr   var
@@ -378,7 +380,7 @@ In this sample we will statically create `PersistentVolume` with an existing Azu
     ```sh
     $ STORAGE_ACCOUNT_NAME=<Provide Azure Storage Account Name Here>
     $ STORAGE_KEY=<Provide Azure Storage Account Key Here>
-    $ kubectl create secret generic azure-secret -n csi-test \
+    kubectl create secret generic azure-secret -n csi-test \
         --from-literal=azurestorageaccountname=$STORAGE_ACCOUNT_NAME \
         --from-literal=azurestorageaccountkey=$STORAGE_KEY
     ```
@@ -388,7 +390,7 @@ In this sample we will statically create `PersistentVolume` with an existing Azu
 3. Apply the manifest.
 
     ```sh
-    $ kubectl apply -f manifests/4-azure-files-csi-static-pv.yaml -n csi-test
+    kubectl apply -f manifests/4-azure-files-csi-static-pv.yaml -n csi-test
     ```
 
     ```
@@ -403,7 +405,7 @@ In this sample we will statically create `PersistentVolume` with an existing Azu
 4. Check whether the resources are provisioned correctly and running.
 
     ```sh
-    $ kubectl get pod,pv,pvc -n csi-test -l app.kubernetes.io/name=csi-test
+    kubectl get pod,pv,pvc -n csi-test -l app.kubernetes.io/name=csi-test
     ```
 
     ```
@@ -423,7 +425,7 @@ In this sample we will statically create `PersistentVolume` with an existing Azu
 5. Verify that persistent volume type is `CSI` and driver is `file.csi.azure.com`. Other properties should match the manifest file.
 
     ```sh
-    $ kubectl describe persistentvolume/azure-file-static -n csi-test
+    kubectl describe persistentvolume/azure-file-static -n csi-test
     ```
 
     ```
@@ -456,7 +458,7 @@ In this sample we will statically create `PersistentVolume` with an existing Azu
 6. Test the persistent volume for read-write operation on 1st pod. Persistent volume is mounted at `/data` path.
 
     ```sh
-    $ kubectl exec -it 1-azure-file-static-65885756b4-6mhnc -n csi-test -- sh
+    kubectl exec -it 1-azure-file-static-65885756b4-6mhnc -n csi-test -- sh
 
     / # ls
     bin        csi-test1  data       dev        etc        home       proc       root       sys        tmp        usr        var
@@ -472,7 +474,7 @@ In this sample we will statically create `PersistentVolume` with an existing Azu
 6. Test the persistent volume for read-write operation on 2nd pod. Persistent volume is mounted at `/data` path.
 
     ```sh
-    $ kubectl exec -it 2-azure-file-static-65885756b4-zd6hm -n csi-test -- sh
+    kubectl exec -it 2-azure-file-static-65885756b4-zd6hm -n csi-test -- sh
 
     / # ls
     bin   data  dev   etc   home  proc  root  sys   tmp   usr   var
@@ -498,7 +500,7 @@ In this sample we will statically create `PersistentVolume` with an existing Azu
 Delete the resources created in `csi-test` namespace. 
 
 ```sh
-$ kubectl delete ns csi-test
+kubectl delete ns csi-test
 ```
 
 ## Reference
