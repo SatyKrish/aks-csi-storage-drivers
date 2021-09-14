@@ -2,11 +2,11 @@
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  name: pvc-azure-disk-dynamic
+  name: pvc-azure-intree-disk-dynamic
   labels:
     app.kubernetes.io/name: csi-test
 spec:
-  storageClassName: managed-csi-premium
+  storageClassName: managed-premium
   accessModes:
     - ReadWriteOnce
   resources:
@@ -16,7 +16,7 @@ spec:
 kind: Deployment
 apiVersion: apps/v1
 metadata:
-  name: azure-disk-dynamic
+  name: azure-intree-disk-dynamic
   labels:
     app.kubernetes.io/name: csi-test
 spec: 
@@ -43,9 +43,9 @@ spec:
             cpu: 200m
             memory: 256Mi
         volumeMounts:
-        - name: azure-disk-dynamic
+        - name: azure-intree-disk-dynamic
           mountPath: /data
       volumes:
-      - name: azure-disk-dynamic
+      - name: azure-intree-disk-dynamic
         persistentVolumeClaim:
-          claimName: pvc-azure-disk-dynamic
+          claimName: pvc-azure-intree-disk-dynamic
