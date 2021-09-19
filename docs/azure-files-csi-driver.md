@@ -1,10 +1,10 @@
-# Azure Files CSI Driver
+# Static Persistent Volume using Azure Files CSI Driver
 
 The Azure Files CSI driver is CSI specification compliant, and used by AKS to manage the lifecycle of Azure file shares attached to pod as `PersistentVolume`.
 
-## Create Static Persistent Volume
-
 In this sample we will statically create `PersistentVolume` with an existing Azure Files share for use by multiple pods in an AKS cluster.
+
+## Create Static Persistent Volume
 
 1. Create a Kubernetes Secret with Azure Storage Account Name and Storage Key.
 
