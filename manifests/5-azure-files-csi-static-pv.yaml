@@ -12,13 +12,13 @@ spec:
   csi:
     driver: file.csi.azure.com
     readOnly: false    
-    volumeHandle: csi-test-10922      # [UNIQUE_VOLUME_ID] - make sure this volumeid is unique in the cluster. `#` is not allowed in self defined volumeHandle
+    volumeHandle: csi-test-109222           # [UNIQUE_VOLUME_ID] - make sure this volumeid is unique in the cluster. `#` is not allowed in self defined volumeHandle
     volumeAttributes:
-      resourceGroup: aks-sandbox-dev  # [EXISTING_RESOURCE_GROUP_NAME] - optional, only set this when storage account is not in the `MC_` resource group
-      shareName: aks-test             # [EXISTING_FILE_SHARE_NAME] - only file share name, don't use full path
+      resourceGroup: ${RESOURCE_GROUP}      # [EXISTING_RESOURCE_GROUP_NAME] - optional, only set this when storage account is not in the `MC_` resource group
+      shareName: ${FILE_SHARE}              # [EXISTING_FILE_SHARE_NAME] - only file share name, don't use full path
     nodeStageSecretRef:
-      name: azure-secret              # [KUBERNETES_SECRET_NAME] - specify kubernetes secret which holds Azure storage account name and storage key
-      namespace: csi-test
+      name: azure-secret                    # [KUBERNETES_SECRET_NAME] - specify kubernetes secret which holds Azure storage account name and storage key
+      namespace: files-csi-test
   mountOptions:
   - dir_mode=0777
   - file_mode=0777

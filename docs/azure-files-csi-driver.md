@@ -4,24 +4,67 @@ The Azure Files CSI driver is CSI specification compliant, and used by AKS to ma
 
 In this sample we will statically create `PersistentVolume` with an existing Azure Files share for use by multiple pods in an AKS cluster.
 
-## Create Static Persistent Volume
+## Setup
+
+1. - Set environment defaults.
+
+    ```sh
+    SUBSCRIPTION_ID=<my-subsscription-id>
+    RESOURCE_GROUP=<my-aks-rg>
+    LOCATION=eastus2
+    CLUSTER_NAME=<my-aks-cluster>
+    STORAGE_ACCOUNT=<my-storage-account>
+    FILE_SHARE=<my-file-share>
+    ```
+
+2. Create an AKS cluster with kubernetes version 1.21, CNI network plugin and managed identity enabled. 
+
+    ```sh
+    az group create \
+    --name $RESOURCE_GROUP \
+    --location $LOCATION
+    az aks create \
+    --resource-group $RESOURCE_GROUP \
+    --name $CLUSTER_NAME \
+    --enable-managed-identity \
+    --network-plugin azure \
+    --kubernetes-version 1.21.2
+    ```
+
+3. Create a general-purpose storage account and a file share 
+
+    ```sh
+    az storage account create \
+        --resource-group $RESOURCE_GROUP \
+        --name $STORAGE_ACCOUNT \
+        --location $LOCATION \
+        --encryption-services file
+    az storage share update  \
+        --name $FILE_SHARE \
+        --account-name $STORAGE_ACCOUNT \
+        --quota 1Gi
+    ```
+
+4. Retrieve storage key.
+
+    ```sh
+    STORAGE_KEY=$(az storage account keys list --resource-group $RESOURCE_GROUP --account-name $STORAGE_ACCOUNT --query [0].value -o tsv)
+    ```
+## Create Static Persistent Volume using Storage Key
 
 1. Create a Kubernetes Secret with Azure Storage Account Name and Storage Key.
 
     ```sh
-    ```sh
     kubectl create namespace files-csi-test
 
-    $ STORAGE_ACCOUNT_NAME=<Provide Azure Storage Account Name Here>
-    $ STORAGE_KEY=<Provide Azure Storage Account Key Here>
     kubectl create secret generic azure-secret -n files-csi-test \
-        --from-literal=azurestorageaccountname=$STORAGE_ACCOUNT_NAME \
+        --from-literal=azurestorageaccountname=$STORAGE_ACCOUNT \
         --from-literal=azurestorageaccountkey=$STORAGE_KEY
     ```
 
 2. Review the manifest file `manifests/5-azure-files-csi-static-pv.yaml` to ensure PersistentVolume has `csi` section with `driver` as `file.csi.azure.com`.
 
-3. Apply the manifest.
+3. In the manifest replace placeholders `${RESOURCE_GROUP}` and `${FILE_SHARE}` with the values specified above. Apply the manifest.
 
     ```sh
     kubectl apply -f manifests/5-azure-files-csi-static-pv.yaml -n files-csi-test
@@ -92,10 +135,10 @@ In this sample we will statically create `PersistentVolume` with an existing Azu
 6. Test the persistent volume for read-write operation on 1st pod. Persistent volume is mounted at `/data` path.
 
     ```sh
-    kubectl exec -it 1-azure-file-static-65885756b4-6mhnc -n files-csi-test -- sh
+    kubectl exec -it $(kubectl get pod -n files-csi-test -l app.kubernetes.io/name=csi-test -o jsonpath='{.items[0].metadata.name}') -n files-csi-test -- sh
 
     / # ls
-    bin        csi-test1  data       dev        etc        home       proc       root       sys        tmp        usr        var
+    bin        data       dev        etc        home       proc       root       sys        tmp        usr        var
     / # cd data/
     /data # echo "Hello world AKS-CSI from Pod 1 !" > csi-test1
     /data # ls
@@ -108,7 +151,7 @@ In this sample we will statically create `PersistentVolume` with an existing Azu
 6. Test the persistent volume for read-write operation on 2nd pod. Persistent volume is mounted at `/data` path.
 
     ```sh
-    kubectl exec -it 2-azure-file-static-65885756b4-zd6hm -n files-csi-test -- sh
+    kubectl exec -it $(kubectl get pod -n files-csi-test -l app.kubernetes.io/name=csi-test -o jsonpath='{.items[1].metadata.name}') -n files-csi-test -- sh
 
     / # ls
     bin   data  dev   etc   home  proc  root  sys   tmp   usr   var
@@ -125,14 +168,27 @@ In this sample we will statically create `PersistentVolume` with an existing Azu
     /data # exit
     ```
 
+
 ## Troubleshooting
 
 - For `permission denied` error while mounting Azure Files share, refer to the troubleshooting instructions [here](https://docs.microsoft.com/en-us/azure/storage/files/storage-troubleshoot-linux-file-connection-problems#mount-error13-permission-denied-when-you-mount-an-azure-file-share)
 
 ## Clean-up
 
+Uninstall `csi-test` application 
+
+```sh
+kubectl delete -f manifests/5-azure-files-csi-static-pv.yaml -n files-csi-test
+```
+
 Delete the resources created in `files-csi-test` namespace. 
 
 ```sh
 kubectl delete namespace files-csi-test
+```
+
+Delete resource group
+
+```sh
+az group delete --name $RESOURCE_GROUP
 ```
