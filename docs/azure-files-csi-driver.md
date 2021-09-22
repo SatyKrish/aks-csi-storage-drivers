@@ -169,16 +169,38 @@ In this sample we will statically create `PersistentVolume` with an existing Azu
     ```
 
 
+## Create Static Persistent Volume using Cluster Identity
+
+1. Get cluster identity of the AKS cluster.
+
+    ```sh
+    CLUSTER_IDENTITY=$(az aks show -g ${RESOURCE_GROUP} -n ${CLUSTER_NAME} --query identity.principalId -o tsv)
+    KUBELET_IDENTITY=$(az aks show -g ${RESOURCE_GROUP} -n ${CLUSTER_NAME} --query identityProfile.kubeletidentity.objectId -o tsv)
+    ```
+
+2. Get storage account resource id.
+
+    ```sh
+    STORAGE_RESOURCE_ID=$(az storage account show -g ${RESOURCE_GROUP} -n ${STORAGE_ACCOUNT} --query id -o tsv)
+    ```
+
+3. Assign cluster identity with `Storage Account Key Operator Service Role` ans `Reader` roles scoped to the storage account..
+
+    ```sh
+    az role assignment create --assignee ${CLUSTER_IDENTITY} --role 'Storage Account Key Operator Service Role' --scope ${STORAGE_RESOURCE_ID}
+    az role assignment create --assignee ${CLUSTER_IDENTITY} --role 'Reader' --scope ${STORAGE_RESOURCE_ID}
+
+    az role assignment create --assignee ${KUBELET_IDENTITY} --role 'Storage Account Key Operator Service Role' --scope ${STORAGE_RESOURCE_ID}
+    az role assignment create --assignee ${KUBELET_IDENTITY} --role 'Reader' --scope ${STORAGE_RESOURCE_ID}
+    ```
+
 ## Troubleshooting
 
 - For `permission denied` error while mounting Azure Files share, refer to the troubleshooting instructions [here](https://docs.microsoft.com/en-us/azure/storage/files/storage-troubleshoot-linux-file-connection-problems#mount-error13-permission-denied-when-you-mount-an-azure-file-share)
 
 ## Clean-up
 
-Uninstall `csi-test` application 
-
-```sh
-kubectl delete -f manifests/5-azure-files-csi-static-pv.yaml -n files-csi-test
+Uninstall `csi-test` Ltic-pv.yaml -n files-csi-test
 ```
 
 Delete the resources created in `files-csi-test` namespace. 
