@@ -4,6 +4,41 @@ The Azure disk CSI driver is CSI specification compliant, and used by AKS to man
 
 In this sample we will dynamically create `PersistentVolume` with Azure disks for use by a single pod in AKS cluster. Also demonstrate backup and restore persistent volume data using CSI driver. 
 
+## Setup
+
+1. Set environment defaults.
+
+    ```sh
+    SUBSCRIPTION_ID=<my-subsscription-id>
+    RESOURCE_GROUP=<my-aks-rg>
+    LOCATION=eastus2
+    CLUSTER_NAME=<my-aks-cluster>
+    ```
+
+2. Create an AKS cluster with kubernetes version 1.21, CNI network plugin and managed identity enabled. 
+
+    ```sh
+    az group create \
+        --name $RESOURCE_GROUP \
+        --location $LOCATION
+    
+    az aks create \
+        --resource-group $RESOURCE_GROUP \
+        --name $CLUSTER_NAME \
+        --enable-managed-identity \
+        --network-plugin azure \
+        --kubernetes-version 1.21.2
+    ```
+
+3. Generate kubeconfig file for connecting to AKS cluster.
+
+    ```sh
+    az aks get-credentials \
+        --resource-group $RESOURCE_GROUP \
+        --name $CLUSTER_NAME \
+        --admin
+    ```
+
 ## Create Dynamic Persistent Volume
 
 1. Review the manifest file `manifests/1-azure-disk-csi-dynamic.yaml` to ensure PersistentVolumeClaim `storageClassName` is set to `managed-csi-premium`.
@@ -379,4 +414,10 @@ Delete the resources created in `disks-csi-test` namespace.
 
 ```sh
 kubectl delete namespace disks-csi-test
+```
+
+Delete resource group
+
+```sh
+az group delete --name $RESOURCE_GROUP
 ```
