@@ -13,7 +13,7 @@ In this sample we will dynamically create `PersistentVolume` with Azure disks fo
     ```sh
     kubectl create namespace disks-csi-test
 
-    kubectl apply -f manifests/1-azure-disk-csi-dynamic.yaml -n disks-csi-test
+    kubectl apply -f manifests/1-azure-disk-csi-dynamic.yaml -n csi-test
     ```
 
     ```
@@ -26,7 +26,7 @@ In this sample we will dynamically create `PersistentVolume` with Azure disks fo
 3. Check whether the resources are provisioned correctly and running.
 
     ```sh
-    kubectl get pod,pvc -n disks-csi-test -l app.kubernetes.io/name=csi-test
+    kubectl get pod,pvc -n csi-test -l app.kubernetes.io/name=csi-test
     ```
 
     ```
@@ -88,7 +88,7 @@ In this sample we will dynamically create `PersistentVolume` with Azure disks fo
 5. Test the persistent volume for read-write operation. In the test pod, persistent volume is mounted at `/data` path.
 
     ```sh
-    kubectl exec -it azure-disk-dynamic-5bfbcd7b7d-swqgv -n disks-csi-test -- sh
+    kubectl exec -it azure-disk-dynamic-5bfbcd7b7d-swqgv -n csi-test -- sh
     ```
 
     ```sh
@@ -117,7 +117,7 @@ For details on all the parameters, see [volume snapshot class parameters](https:
 2. Apply the manifest.
 
     ```sh
-    kubectl apply -f manifests/2-azure-disk-csi-snapshot.yaml -n disks-csi-test
+    kubectl apply -f manifests/2-azure-disk-csi-snapshot.yaml -n csi-test
     ```
 
     ```
@@ -129,7 +129,7 @@ For details on all the parameters, see [volume snapshot class parameters](https:
 3. Check whether the `VolumeSnapshot` resources are provisioned correctly.
 
     ```sh
-    kubectl get volumesnapshotclass,volumesnapshot,volumesnapshotcontent -n disks-csi-test
+    kubectl get volumesnapshotclass,volumesnapshot,volumesnapshotcontent -n csi-test
     ```
 
     ```
@@ -148,7 +148,7 @@ For details on all the parameters, see [volume snapshot class parameters](https:
 4. Verify the `VolumeSnapshotContent` resource to ensure that the `volumeHandle` matches the  Managed Disk created in previous section, `snapshotHandle` is created as a `Snapshot` in AKS `MC_***` resource group and `Status` has `Ready To Use` set to `true`.
 
     ```sh
-    kubectl describe VolumeSnapshotContent snapcontent-ed014617-5396-47f4-9c87-06eebe16d8bb -n disks-csi-test
+    kubectl describe VolumeSnapshotContent snapcontent-ed014617-5396-47f4-9c87-06eebe16d8bb -n csi-test
     ```
 
     ```
@@ -195,7 +195,7 @@ During DR, backed up data can be restored to a Managed Disk from the Snapshot cr
 
 1. Lets simulate failure by deleting the pods and persistent volume created earlier.
     ```sh
-    kubectl delete -f manifests/1-azure-disk-csi-dynamic.yaml -n disks-csi-test
+    kubectl delete -f manifests/1-azure-disk-csi-dynamic.yaml -n csi-test
     ```
     
     ```
@@ -210,7 +210,7 @@ During DR, backed up data can be restored to a Managed Disk from the Snapshot cr
 2. Apply the manifest.
 
     ```sh
-    kubectl apply -f manifests/3-azure-disk-csi-restore.yaml -n disks-csi-test
+    kubectl apply -f manifests/3-azure-disk-csi-restore.yaml -n csi-test
     ```
 
     ```
@@ -223,7 +223,7 @@ During DR, backed up data can be restored to a Managed Disk from the Snapshot cr
 3. Check whether the resources are provisioned correctly and running.
 
     ```sh
-    kubectl get pod,pvc -n disks-csi-test -l app.kubernetes.io/name=csi-test
+    kubectl get pod,pvc -n csi-test -l app.kubernetes.io/name=csi-test
     ```
 
     ```
@@ -286,7 +286,7 @@ During DR, backed up data can be restored to a Managed Disk from the Snapshot cr
 5. Check whether the data is restored. In the test pod, persistent volume is mounted at `/data` path.
 
     ```sh
-    kubectl exec -it azure-disk-dynamic-77f885d64b-hp5kf -n disks-csi-test -- sh
+    kubectl exec -it azure-disk-dynamic-77f885d64b-hp5kf -n csi-test -- sh
 
     / # ls
     bin   data  dev   etc   home  proc  root  sys   tmp   usr   var
@@ -312,7 +312,7 @@ In this sample we will use `in-tree` volume storage class to dynamically create 
     ```sh
     kubectl create namespace csi-test
 
-    kubectl apply -f manifests/4-azure-disk-csi-migrate.yaml -n disks-csi-test
+    kubectl apply -f manifests/4-azure-disk-csi-migrate.yaml -n csi-test
     ```
 
     ```
@@ -325,7 +325,7 @@ In this sample we will use `in-tree` volume storage class to dynamically create 
 3. Check whether the resources are provisioned correctly and running.
 
     ```sh
-    kubectl get pod,pvc -n disks-csi-test -l app.kubernetes.io/name=csi-test
+    kubectl get pod,pvc -n csi-test -l app.kubernetes.io/name=csi-test
     ```
 
     ```
@@ -355,7 +355,7 @@ In this sample we will use `in-tree` volume storage class to dynamically create 
 4. Test the persistent volume for read-write operation. In the test pod, persistent volume is mounted at `/data` path.
 
     ```sh
-    kubectl exec -it azure-intree-disk-dynamic-5bfbcd7b7d-swqgv -n disks-csi-test -- sh
+    kubectl exec -it azure-intree-disk-dynamic-5bfbcd7b7d-swqgv -n csi-test -- sh
     ```
 
     ```sh

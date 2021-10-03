@@ -6,7 +6,7 @@ In this sample we will statically create `PersistentVolume` with an existing Azu
 
 ## Setup
 
-1. - Set environment defaults.
+1. Set environment defaults.
 
     ```sh
     SUBSCRIPTION_ID=<my-subsscription-id>
@@ -45,76 +45,77 @@ In this sample we will statically create `PersistentVolume` with an existing Azu
         --quota 1Gi
     ```
 
-4. Retrieve storage key.
+## Create Static Persistent Volume using Storage Key
+
+1. 4. Retrieve storage key.
 
     ```sh
     STORAGE_KEY=$(az storage account keys list --resource-group $RESOURCE_GROUP --account-name $STORAGE_ACCOUNT --query [0].value -o tsv)
     ```
-## Create Static Persistent Volume using Storage Key
-
-1. Create a Kubernetes Secret with Azure Storage Account Name and Storage Key.
+    
+2. Create a Kubernetes Secret with Azure Storage Account Name and Storage Key.
 
     ```sh
     kubectl create namespace files-csi-test
 
-    kubectl create secret generic azure-secret -n files-csi-test \
+    kubectl create secret generic azure-secret -n csi-test \
         --from-literal=azurestorageaccountname=$STORAGE_ACCOUNT \
         --from-literal=azurestorageaccountkey=$STORAGE_KEY
     ```
 
-2. Review the manifest file `manifests/5-azure-files-csi-static-pv.yaml` to ensure PersistentVolume has `csi` section with `driver` as `file.csi.azure.com`.
+3. Review the manifest file `manifests/6-azure-files-csi-static-key.yaml` to ensure PersistentVolume has `csi` section with `driver` as `file.csi.azure.com`.
 
-3. In the manifest replace placeholders `${RESOURCE_GROUP}` and `${FILE_SHARE}` with the values specified above. Apply the manifest.
+4. In the manifest replace placeholders `${RESOURCE_GROUP}` and `${FILE_SHARE}` with the values specified above. Apply the manifest.
 
     ```sh
-    kubectl apply -f manifests/5-azure-files-csi-static-pv.yaml -n files-csi-test
+    kubectl apply -f manifests/5-azure-files-csi-static-key.yaml -n csi-test
     ```
 
     ```
     OUTPUT:
 
-    persistentvolume/azure-file-static created
-    persistentvolumeclaim/azure-file-static created
-    deployment.apps/1-azure-file-static created
-    deployment.apps/2-azure-file-static created
+    persistentvolume/azure-file-static-key created
+    persistentvolumeclaim/azure-file-static-key created
+    deployment.apps/1-azure-file-static-key created
+    deployment.apps/2-azure-file-static-key created
     ```
 
-4. Check whether the resources are provisioned correctly and running.
+5. Check whether the resources are provisioned correctly and running.
 
     ```sh
-    kubectl get pod,pv,pvc -n files-csi-test -l app.kubernetes.io/name=csi-test
+    kubectl get pod,pv,pvc -n csi-test -l app.kubernetes.io/name=csi-test
     ```
 
     ```
     OUTPUT:
 
-    NAME                                       READY   STATUS    RESTARTS   AGE
-    pod/1-azure-file-static-65885756b4-6mhnc   1/1     Running   0          3m23s
-    pod/2-azure-file-static-65885756b4-zd6hm   1/1     Running   0          3m22s
+    NAME                                           READY   STATUS    RESTARTS   AGE
+    pod/1-azure-file-static-key-65885756b4-6mhnc   1/1     Running   0          3m23s
+    pod/2-azure-file-static-key-65885756b4-zd6hm   1/1     Running   0          3m22s
 
-    NAME                                 CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS   CLAIM              STORAGECLASS       REASON   AGE
-    persistentvolume/azure-file-static   1Gi        RWX            Retain           Bound    csi-test   azure-file-static           3m24s
+    NAME                                     CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS   CLAIM              STORAGECLASS       REASON   AGE
+    persistentvolume/azure-file-static-key   1Gi        RWX            Retain           Bound    csi-test   azure-file-static           3m24s
 
-    NAME                                       STATUS   VOLUME                      CAPACITY   ACCESS MODES  STORAGECLASS           AGE
-    persistentvolumeclaim/azure-file-static    Bound    azure-file-static           1Gi        RWX                                  3m23s
+    NAME                                           STATUS   VOLUME                      CAPACITY   ACCESS MODES  STORAGECLASS           AGE
+    persistentvolumeclaim/azure-file-static-key    Bound    azure-file-static           1Gi        RWX                                  3m23s
     ```
 
-5. Verify that persistent volume type is `CSI` and driver is `file.csi.azure.com`. Other properties should match the manifest file.
+6. Verify that persistent volume type is `CSI` and driver is `file.csi.azure.com`. Other properties should match the manifest file.
 
     ```sh
-    kubectl describe persistentvolume/azure-file-static -n files-csi-test
+    kubectl describe persistentvolume/pv-azure-file-static-key -n csi-test
     ```
 
     ```
     OUTPUT:
 
-    Name:            azure-file-static
+    Name:            azure-file-static-key
     Labels:          app.kubernetes.io/name=csi-test
     Annotations:     pv.kubernetes.io/bound-by-controller: yes
     Finalizers:      [kubernetes.io/pv-protection external-attacher/file-csi-azure-com]
     StorageClass:
     Status:          Bound
-    Claim:           csi-test/azure-file-static
+    Claim:           csi-test/azure-file-static-key
     Reclaim Policy:  Retain
     Access Modes:    RWX
     VolumeMode:      Filesystem
@@ -128,14 +129,14 @@ In this sample we will statically create `PersistentVolume` with an existing Azu
         VolumeHandle:      csi-test-10922
         ReadOnly:          false
         VolumeAttributes:      resourceGroup=aks-sandbox-dev
-                            shareName=aks-test
+                               shareName=aks-test
     Events:                <none>
     ```
 
-6. Test the persistent volume for read-write operation on 1st pod. Persistent volume is mounted at `/data` path.
+7. Test the persistent volume for read-write operation on 1st pod. Persistent volume is mounted at `/data` path.
 
     ```sh
-    kubectl exec -it $(kubectl get pod -n files-csi-test -l app.kubernetes.io/name=csi-test -o jsonpath='{.items[0].metadata.name}') -n files-csi-test -- sh
+    kubectl exec -it $(kubectl get pod -n csi-test -l app.kubernetes.io/name=csi-test -o jsonpath='{.items[0].metadata.name}') -n csi-test -- sh
 
     / # ls
     bin        data       dev        etc        home       proc       root       sys        tmp        usr        var
@@ -148,10 +149,10 @@ In this sample we will statically create `PersistentVolume` with an existing Azu
     /data # exit
     ```
 
-6. Test the persistent volume for read-write operation on 2nd pod. Persistent volume is mounted at `/data` path.
+8. Test the persistent volume for read-write operation on 2nd pod. Persistent volume is mounted at `/data` path.
 
     ```sh
-    kubectl exec -it $(kubectl get pod -n files-csi-test -l app.kubernetes.io/name=csi-test -o jsonpath='{.items[1].metadata.name}') -n files-csi-test -- sh
+    kubectl exec -it $(kubectl get pod -n csi-test -l app.kubernetes.io/name=csi-test -o jsonpath='{.items[1].metadata.name}') -n csi-test -- sh
 
     / # ls
     bin   data  dev   etc   home  proc  root  sys   tmp   usr   var
@@ -168,13 +169,11 @@ In this sample we will statically create `PersistentVolume` with an existing Azu
     /data # exit
     ```
 
+## Create Static Persistent Volume using Kubelet Identity
 
-## Create Static Persistent Volume using Cluster Identity
-
-1. Get cluster identity of the AKS cluster.
+1. Get cluster identity used by the AKS cluster agentpools.
 
     ```sh
-    CLUSTER_IDENTITY=$(az aks show -g ${RESOURCE_GROUP} -n ${CLUSTER_NAME} --query identity.principalId -o tsv)
     KUBELET_IDENTITY=$(az aks show -g ${RESOURCE_GROUP} -n ${CLUSTER_NAME} --query identityProfile.kubeletidentity.objectId -o tsv)
     ```
 
@@ -184,14 +183,116 @@ In this sample we will statically create `PersistentVolume` with an existing Azu
     STORAGE_RESOURCE_ID=$(az storage account show -g ${RESOURCE_GROUP} -n ${STORAGE_ACCOUNT} --query id -o tsv)
     ```
 
-3. Assign cluster identity with `Storage Account Key Operator Service Role` ans `Reader` roles scoped to the storage account..
+3. Assign kubelet identity with `Storage Account Key Operator Service Role` ans `Reader` roles scoped to the storage account..
 
     ```sh
-    az role assignment create --assignee ${CLUSTER_IDENTITY} --role 'Storage Account Key Operator Service Role' --scope ${STORAGE_RESOURCE_ID}
-    az role assignment create --assignee ${CLUSTER_IDENTITY} --role 'Reader' --scope ${STORAGE_RESOURCE_ID}
-
     az role assignment create --assignee ${KUBELET_IDENTITY} --role 'Storage Account Key Operator Service Role' --scope ${STORAGE_RESOURCE_ID}
+    
     az role assignment create --assignee ${KUBELET_IDENTITY} --role 'Reader' --scope ${STORAGE_RESOURCE_ID}
+    ```
+
+4. Review the manifest file `manifests/5-azure-files-csi-static-mi.yaml` to ensure PersistentVolume has `csi` section with `driver` as `file.csi.azure.com`.
+
+4. In the manifest replace placeholders `${RESOURCE_GROUP}` and `${FILE_SHARE}` with the values specified above. Apply the manifest.
+
+    ```sh
+    kubectl apply -f manifests/5-azure-files-csi-static-mi.yaml -n csi-test
+    ```
+
+    ```
+    OUTPUT:
+
+    persistentvolume/azure-file-static-key created
+    persistentvolumeclaim/azure-file-static-key created
+    deployment.apps/1-azure-file-static-key created
+    deployment.apps/2-azure-file-static-key created
+    ```
+
+5. Check whether the resources are provisioned correctly and running.
+
+    ```sh
+    kubectl get pod,pv,pvc -n csi-test -l app.kubernetes.io/name=csi-test
+    ```
+
+    ```
+    OUTPUT:
+
+    NAME                                         READY   STATUS    RESTARTS   AGE
+    pod/1-azure-file-static-mi-f66f9f956-jtpc8   1/1     Running   0          37s
+    pod/2-azure-file-static-mi-cfc95bfc5-2jrbr   1/1     Running   0          37s
+
+    NAME                                       CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS   CLAIM                                STORAGECLASS   REASON   AGE
+    persistentvolume/pv-azure-file-static-mi   1Gi        RWX            Retain           Bound    csi-test/pvc-azure-file-static-mi                            39s
+
+    NAME                                             STATUS   VOLUME                    CAPACITY   ACCESS MODES   STORAGECLASS   AGE
+    persistentvolumeclaim/pvc-azure-file-static-mi   Bound    pv-azure-file-static-mi   1Gi        RWX                           38s
+    ```
+
+6. Verify that persistent volume type is `CSI` and driver is `file.csi.azure.com`. Other properties should match the manifest file.
+
+    ```sh
+    kubectl describe persistentvolume/pv-azure-file-static-mi -n csi-test
+    ```
+
+    ```
+    OUTPUT:
+
+    Name:            azure-file-static-key
+    Labels:          app.kubernetes.io/name=csi-test
+    Annotations:     pv.kubernetes.io/bound-by-controller: yes
+    Finalizers:      [kubernetes.io/pv-protection external-attacher/file-csi-azure-com]
+    StorageClass:
+    Status:          Bound
+    Claim:           csi-test/azure-file-static-key
+    Reclaim Policy:  Retain
+    Access Modes:    RWX
+    VolumeMode:      Filesystem
+    Capacity:        1Gi
+    Node Affinity:   <none>
+    Message:
+    Source:
+        Type:              CSI (a Container Storage Interface (CSI) volume source)
+        Driver:            file.csi.azure.com
+        FSType:
+        VolumeHandle:      csi-test-10922
+        ReadOnly:          false
+        VolumeAttributes:      resourceGroup=aks-sandbox-de
+                               1shareName=aks-test
+                               storageAccount=satyaksstorage
+
+    Events:                <none>
+    ```
+
+7. Test the persistent volume for read-write operation on 1st pod. Persistent volume is mounted at `/data` path.
+
+    ```sh
+    kubectl exec -it $(kubectl get pod -n csi-test -l app.kubernetes.io/name=csi-test -o jsonpath='{.items[0].metadata.name}') -n csi-test -- sh
+
+    / # ls
+    bin        data       dev        etc        home       proc       root       sys        tmp        usr        var
+    / # cd data/
+    /data # ls
+    csi-test1
+    csi-test2
+    /data # cat csi-test1
+    Hello world AKS-CSI from Pod 1 !
+    /data # exit
+    ```
+
+8. Test the persistent volume for read-write operation on 2nd pod. Persistent volume is mounted at `/data` path.
+
+    ```sh
+    kubectl exec -it $(kubectl get pod -n csi-test -l app.kubernetes.io/name=csi-test -o jsonpath='{.items[1].metadata.name}') -n csi-test -- sh
+
+    / # ls
+    bin   data  dev   etc   home  proc  root  sys   tmp   usr   var
+    / # cd data/
+    /data # ls
+    csi-test1
+    csi-test2
+    /data # cat csi-test2
+    Hello world AKS-CSI from Pod 2 !
+    /data # exit
     ```
 
 ## Troubleshooting
@@ -200,7 +301,7 @@ In this sample we will statically create `PersistentVolume` with an existing Azu
 
 ## Clean-up
 
-Uninstall `csi-test` Ltic-pv.yaml -n files-csi-test
+Uninstall `csi-test` Ltic-pv.yaml -n csi-test
 ```
 
 Delete the resources created in `files-csi-test` namespace. 
