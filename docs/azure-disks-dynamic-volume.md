@@ -1,4 +1,4 @@
-# Dynamic Persistent Volume using Azure Disks CSI Driver
+# Azure Disks Dynamic Persistent Volume
 
 The Azure disk CSI driver is CSI specification compliant, and used by AKS to manage the lifecycle of Azure disks attached to the pod as `PersistentVolume`.
 
