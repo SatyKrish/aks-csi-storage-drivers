@@ -69,9 +69,11 @@ managed-premium         kubernetes.io/azure-disk   Delete          WaitForFirstC
 
 ## Scenarios
 
-- [Dynamic Persistent Volume using Azure Disks CSI Driver](docs/azure-disks-csi-driver.md)
+- [Azure Disks Dynamic Persistent Volume](docs/azure-disks-dynamic-volume.md)
 
-- [Static Persistent Volume using Azure Files CSI Driver](docs/azure-files-csi-driver.md)
+- [Azure Files Static Persistent Volume using Storage Key](docs/azure-files-static-volume-storage-key.md)
+
+- [Azure Files Static Persistent Volume using Managed](docs/azure-files-static-volume-managed-identity.md)
 
 
 ## References
