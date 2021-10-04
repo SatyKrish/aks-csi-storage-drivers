@@ -2,7 +2,7 @@
 
 The Azure Files CSI driver is CSI specification compliant, and used by AKS to manage the lifecycle of Azure file shares attached to pod as `PersistentVolume`.
 
-In this sample we will statically create `PersistentVolume` with an existing Azure Files share for use by multiple pods in an AKS cluster.
+In this sample we will statically create `PersistentVolume` with an existing Azure Files share using managed identity. Managed identities can authorize access to file share from AKS cluster using Azure AD credentials. By using managed identities, you can avoid storing Storage Key as a Kubernetes secret in AKS cluster.
 
 ## Setup
 

@@ -2,7 +2,7 @@
 
 The Azure Files CSI driver is CSI specification compliant, and used by AKS to manage the lifecycle of Azure file shares attached to pod as `PersistentVolume`.
 
-In this sample we will statically create `PersistentVolume` with an existing Azure Files share for use by multiple pods in an AKS cluster.
+In this sample we will statically create `PersistentVolume` with an existing Azure Files share using storage key. Kubernetes needs storage key to access the file share, and this cretdential is stored in a Kubernetes Secret. 
 
 ## Setup
 
@@ -41,7 +41,7 @@ In this sample we will statically create `PersistentVolume` with an existing Azu
         --admin
     ```
 
-4. Create a general-purpose storage account and a file share 
+4. Before you can use Azure Files as a Kubernetes volume, you must create an Azure Storage account and the file share. The following commands create a storage account and a files share 
 
     ```sh
     az storage account create \
