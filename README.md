@@ -73,7 +73,7 @@ managed-premium         kubernetes.io/azure-disk   Delete          WaitForFirstC
 
 - [Azure Files Static Persistent Volume using Storage Key](docs/azure-files-static-volume-storage-key.md)
 
-- [Azure Files Static Persistent Volume using Managed](docs/azure-files-static-volume-managed-identity.md)
+- [Azure Files Static Persistent Volume using Managed Identity](docs/azure-files-static-volume-managed-identity.md)
 
 
 ## References
