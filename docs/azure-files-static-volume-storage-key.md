@@ -21,17 +21,27 @@ In this sample we will statically create `PersistentVolume` with an existing Azu
 
     ```sh
     az group create \
-    --name $RESOURCE_GROUP \
-    --location $LOCATION
+        --name $RESOURCE_GROUP \
+        --location $LOCATION
+
     az aks create \
-    --resource-group $RESOURCE_GROUP \
-    --name $CLUSTER_NAME \
-    --enable-managed-identity \
-    --network-plugin azure \
-    --kubernetes-version 1.21.2
+        --resource-group $RESOURCE_GROUP \
+        --name $CLUSTER_NAME \
+        --enable-managed-identity \
+        --network-plugin azure \
+        --kubernetes-version 1.21.2
     ```
 
-3. Create a general-purpose storage account and a file share 
+3. Generate kubeconfig file for connecting to AKS cluster.
+
+    ```sh
+    az aks get-credentials \
+        --resource-group $RESOURCE_GROUP \
+        --name $CLUSTER_NAME \
+        --admin
+    ```
+
+4. Create a general-purpose storage account and a file share 
 
     ```sh
     az storage account create \
@@ -39,6 +49,7 @@ In this sample we will statically create `PersistentVolume` with an existing Azu
         --name $STORAGE_ACCOUNT \
         --location $LOCATION \
         --encryption-services file
+
     az storage share update  \
         --name $FILE_SHARE \
         --account-name $STORAGE_ACCOUNT \
@@ -47,7 +58,7 @@ In this sample we will statically create `PersistentVolume` with an existing Azu
 
 ## Create Static Persistent Volume using Storage Key
 
-1. 4. Retrieve storage key.
+1. Retrieve storage key.
 
     ```sh
     STORAGE_KEY=$(az storage account keys list --resource-group $RESOURCE_GROUP --account-name $STORAGE_ACCOUNT --query [0].value -o tsv)
