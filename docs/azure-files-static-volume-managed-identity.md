@@ -21,14 +21,15 @@ In this sample we will statically create `PersistentVolume` with an existing Azu
 
     ```sh
     az group create \
-    --name $RESOURCE_GROUP \
-    --location $LOCATION
+        --name $RESOURCE_GROUP \
+        --location $LOCATION
+
     az aks create \
-    --resource-group $RESOURCE_GROUP \
-    --name $CLUSTER_NAME \
-    --enable-managed-identity \
-    --network-plugin azure \
-    --kubernetes-version 1.21.2
+        --resource-group $RESOURCE_GROUP \
+        --name $CLUSTER_NAME \
+        --enable-managed-identity \
+        --network-plugin azure \
+        --kubernetes-version 1.21.2
     ```
 
 3. Create a general-purpose storage account and a file share 
@@ -62,9 +63,15 @@ In this sample we will statically create `PersistentVolume` with an existing Azu
 3. Assign kubelet identity with `Storage Account Key Operator Service Role` ans `Reader` roles scoped to the storage account..
 
     ```sh
-    az role assignment create --assignee ${KUBELET_IDENTITY} --role 'Storage Account Key Operator Service Role' --scope ${STORAGE_RESOURCE_ID}
+    az role assignment create \
+        --assignee ${KUBELET_IDENTITY} \
+        --role 'Storage Account Key Operator Service Role' \
+        --scope ${STORAGE_RESOURCE_ID}
     
-    az role assignment create --assignee ${KUBELET_IDENTITY} --role 'Reader' --scope ${STORAGE_RESOURCE_ID}
+    az role assignment create \
+        --assignee ${KUBELET_IDENTITY} \
+        --role 'Reader' \
+        --scope ${STORAGE_RESOURCE_ID}
     ```
 
 4. Review the manifest file `manifests/5-azure-files-csi-static-mi.yaml` to ensure PersistentVolume has `csi` section with `driver` as `file.csi.azure.com`.
@@ -78,10 +85,10 @@ In this sample we will statically create `PersistentVolume` with an existing Azu
     ```
     OUTPUT:
 
-    persistentvolume/azure-file-static-key created
-    persistentvolumeclaim/azure-file-static-key created
-    deployment.apps/1-azure-file-static-key created
-    deployment.apps/2-azure-file-static-key created
+    persistentvolume/azure-file-static-mi created
+    persistentvolumeclaim/azure-file-static-mi created
+    deployment.apps/1-azure-file-static-mi created
+    deployment.apps/2-azure-file-static-mi created
     ```
 
 5. Check whether the resources are provisioned correctly and running.
@@ -110,35 +117,6 @@ In this sample we will statically create `PersistentVolume` with an existing Azu
     kubectl describe persistentvolume/pv-azure-file-static-mi -n csi-test
     ```
 
-    ```
-    OUTPUT:
-
-    Name:            azure-file-static-key
-    Labels:          app.kubernetes.io/name=csi-test
-    Annotations:     pv.kubernetes.io/bound-by-controller: yes
-    Finalizers:      [kubernetes.io/pv-protection external-attacher/file-csi-azure-com]
-    StorageClass:
-    Status:          Bound
-    Claim:           csi-test/azure-file-static-key
-    Reclaim Policy:  Retain
-    Access Modes:    RWX
-    VolumeMode:      Filesystem
-    Capacity:        1Gi
-    Node Affinity:   <none>
-    Message:
-    Source:
-        Type:              CSI (a Container Storage Interface (CSI) volume source)
-        Driver:            file.csi.azure.com
-        FSType:
-        VolumeHandle:      csi-test-10922
-        ReadOnly:          false
-        VolumeAttributes:      resourceGroup=aks-sandbox-de
-                               1shareName=aks-test
-                               storageAccount=satyaksstorage
-
-    Events:                <none>
-    ```
-
 7. Test the persistent volume for read-write operation on 1st pod. Persistent volume is mounted at `/data` path.
 
     ```sh
@@ -147,9 +125,9 @@ In this sample we will statically create `PersistentVolume` with an existing Azu
     / # ls
     bin        data       dev        etc        home       proc       root       sys        tmp        usr        var
     / # cd data/
+    /data # echo "Hello world AKS-CSI from Pod 1 !" > csi-test1
     /data # ls
     csi-test1
-    csi-test2
     /data # cat csi-test1
     Hello world AKS-CSI from Pod 1 !
     /data # exit
@@ -165,7 +143,11 @@ In this sample we will statically create `PersistentVolume` with an existing Azu
     / # cd data/
     /data # ls
     csi-test1
-    csi-test2
+    /data # cat csi-test1
+    Hello world AKS-CSI from Pod 1 !
+    /data # echo "Hello world AKS-CSI from Pod 2 !" > csi-test2
+    /data # ls
+    csi-test1  csi-test2
     /data # cat csi-test2
     Hello world AKS-CSI from Pod 2 !
     /data # exit
@@ -177,13 +159,10 @@ In this sample we will statically create `PersistentVolume` with an existing Azu
 
 ## Clean-up
 
-Uninstall `csi-test` Ltic-pv.yaml -n csi-test
-```
-
-Delete the resources created in `files-csi-test` namespace. 
+Delete the resources created in `csi-test` namespace. 
 
 ```sh
-kubectl delete namespace files-csi-test
+kubectl delete namespace csi-test
 ```
 
 Delete resource group

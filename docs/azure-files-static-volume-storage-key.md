@@ -117,33 +117,6 @@ In this sample we will statically create `PersistentVolume` with an existing Azu
     kubectl describe persistentvolume/pv-azure-file-static-key -n csi-test
     ```
 
-    ```
-    OUTPUT:
-
-    Name:            azure-file-static-key
-    Labels:          app.kubernetes.io/name=csi-test
-    Annotations:     pv.kubernetes.io/bound-by-controller: yes
-    Finalizers:      [kubernetes.io/pv-protection external-attacher/file-csi-azure-com]
-    StorageClass:
-    Status:          Bound
-    Claim:           csi-test/azure-file-static-key
-    Reclaim Policy:  Retain
-    Access Modes:    RWX
-    VolumeMode:      Filesystem
-    Capacity:        1Gi
-    Node Affinity:   <none>
-    Message:
-    Source:
-        Type:              CSI (a Container Storage Interface (CSI) volume source)
-        Driver:            file.csi.azure.com
-        FSType:
-        VolumeHandle:      csi-test-10922
-        ReadOnly:          false
-        VolumeAttributes:      resourceGroup=aks-sandbox-dev
-                               shareName=aks-test
-    Events:                <none>
-    ```
-
 7. Test the persistent volume for read-write operation on 1st pod. Persistent volume is mounted at `/data` path.
 
     ```sh
@@ -186,13 +159,10 @@ In this sample we will statically create `PersistentVolume` with an existing Azu
 
 ## Clean-up
 
-Uninstall `csi-test` Ltic-pv.yaml -n csi-test
-```
-
-Delete the resources created in `files-csi-test` namespace. 
+Delete the resources created in `csi-test` namespace. 
 
 ```sh
-kubectl delete namespace files-csi-test
+kubectl delete namespace csi-test
 ```
 
 Delete resource group
